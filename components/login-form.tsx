@@ -12,15 +12,9 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 // import { toast } from "@/components/ui/use-toast"
+import { loginFormSchema } from "@/schemas/auth-schemas";
 
-const formSchema = z.object({
-    email: z.string().email({
-        message: "Please enter a valid email address.",
-    }),
-    password: z.string().min(1, {
-        message: "Password is required.",
-    }),
-})
+const formSchema = loginFormSchema;
 
 const itemVariants = {
     hidden: { y: 20, opacity: 0 },
@@ -50,11 +44,6 @@ export function LoginForm({ onModeChange }: { onModeChange: () => void }) {
         setTimeout(() => {
             console.log(values)
             setIsLoading(false)
-            // toast({
-            //     title: "Logged in!",
-            //     description: "Welcome back to MindMate.",
-            // })
-
             // Redirect to dashboard
             router.push("/dashboard")
         }, 1500)
