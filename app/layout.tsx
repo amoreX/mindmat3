@@ -17,6 +17,12 @@ export const metadata: Metadata = {
   description: "AI Assissted Mental Health Tracker",
 };
 
+// const AnimatedBackground = dynamic(
+//   () => import("@/components/animated-background").then(mod => mod.AnimatedBackground),
+//   { ssr: false }
+// )
+
+
 export default function RootLayout({
   children,
 }: Readonly<{

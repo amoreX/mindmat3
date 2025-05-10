@@ -7,8 +7,6 @@ export function AnimatedBackground() {
     return (
         <div className="fixed inset-0 z-0 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 opacity-80" />
-
-            {/* Animated circles */}
             {Array.from({ length: 15 }).map((_, i) => (
                 <motion.div
                     key={i}
@@ -19,14 +17,13 @@ export function AnimatedBackground() {
                         scale: Math.random() * 0.5 + 0.5,
                     }}
                     animate={{
-                        x: [Math.random() * 100 - 50 + "%", Math.random() * 100 - 50 + "%", Math.random() * 100 - 50 + "%"],
-                        y: [Math.random() * 100 - 50 + "%", Math.random() * 100 - 50 + "%", Math.random() * 100 - 50 + "%"],
+                        x: [Math.random() * 100 - 50 + "%", Math.random() * 100 - 50 + "%"],
+                        y: [Math.random() * 100 - 50 + "%", Math.random() * 100 - 50 + "%"],
                     }}
                     transition={{
                         duration: Math.random() * 20 + 20,
-                        repeat: Number.POSITIVE_INFINITY,
+                        repeat: Infinity,
                         repeatType: "reverse",
-
                     }}
                     style={{
                         width: Math.random() * 400 + 100,
@@ -35,7 +32,6 @@ export function AnimatedBackground() {
                 />
             ))}
 
-            {/* Floating particles */}
             <ParticleCanvas />
         </div>
     )
@@ -45,6 +41,8 @@ function ParticleCanvas() {
     const canvasRef = useRef<HTMLCanvasElement>(null)
 
     useEffect(() => {
+        if (typeof window === "undefined") return // ⛔ Prevent SSR crash
+
         const canvas = canvasRef.current
         if (!canvas) return
 
@@ -54,7 +52,6 @@ function ParticleCanvas() {
         let animationFrameId: number
         let particles: Particle[] = []
 
-        // Set canvas dimensions
         const resizeCanvas = () => {
             canvas.width = window.innerWidth
             canvas.height = window.innerHeight
@@ -63,7 +60,6 @@ function ParticleCanvas() {
         window.addEventListener("resize", resizeCanvas)
         resizeCanvas()
 
-        // Particle class
         class Particle {
             x: number
             y: number
@@ -103,7 +99,6 @@ function ParticleCanvas() {
             }
         }
 
-        // Initialize particles
         const initParticles = () => {
             particles = []
             const particleCount = Math.min(Math.floor((canvas.width * canvas.height) / 10000), 100)
@@ -115,21 +110,17 @@ function ParticleCanvas() {
 
         initParticles()
 
-        // Animation loop
         const animate = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height)
-
             for (const particle of particles) {
                 particle.update()
                 particle.draw()
             }
-
             animationFrameId = requestAnimationFrame(animate)
         }
 
         animate()
 
-        // Cleanup
         return () => {
             window.removeEventListener("resize", resizeCanvas)
             cancelAnimationFrame(animationFrameId)
@@ -138,4 +129,3 @@ function ParticleCanvas() {
 
     return <canvas ref={canvasRef} className="absolute inset-0 z-0" style={{ pointerEvents: "none" }} />
 }
-
