@@ -13,6 +13,7 @@ type FormMode = "signup" | "login" | "learn-more"
 
 export default function Signin() {
     const [formMode, setFormMode] = useState<FormMode>("signup")
+    
     const lenis = new Lenis({
         autoRaf: true,
     });
