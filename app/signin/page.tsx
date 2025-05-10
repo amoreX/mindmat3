@@ -7,10 +7,19 @@ import { SignUpForm } from "@/components/sign-up-form"
 import { LoginForm } from "@/components/login-form"
 import { LearnMoreContent } from "@/components/learn-more-content"
 
+
 type FormMode = "signup" | "login" | "learn-more"
 
 export default function Signin() {
     const [formMode, setFormMode] = useState<FormMode>("signup")
+    const lenis = new Lenis({
+        autoRaf: true,
+      });
+      
+      // Listen for the scroll event and log the event data
+      lenis.on('scroll', (e) => {
+        console.log(e);
+      });
 
     const containerVariants = {
         hidden: { opacity: 0 },
