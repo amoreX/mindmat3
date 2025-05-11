@@ -1,12 +1,22 @@
 "use client"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useUserStore } from "@/store/userStore";
 import { useRouter } from "next/navigation";
-
+import { supabase } from "@/lib/supabase-client";
 export default function Dashboard() {
     const router = useRouter();
-    const { isAuthenticated, hydrated } = useUserStore();
-
+    const { isAuthenticated, hydrated, email, setAuthenticated } = useUserStore();
+    const [name, setName] = useState();
+    useEffect(() => {
+        if (!hydrated) return;
+        if (email == "") return;
+        const testingSupa = async () => {
+            const { data: userData, error: fuckingerror } = await supabase.from("users").select("*").eq("email", email).single();
+            console.log(userData);
+            setName(userData.name);
+        };
+        testingSupa();
+    })
     useEffect(() => {
         if (hydrated && !isAuthenticated) {
             router.push("/signin");
@@ -15,5 +25,5 @@ export default function Dashboard() {
 
     if (!hydrated) return null; // or loading UI
 
-    return <div>ok</div>;
+    return <div className="absolute " onClick={() => { setAuthenticated(false) }}>{name}</div>;
 }

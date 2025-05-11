@@ -30,7 +30,7 @@ const itemVariants = {
 
 
 export function SignUpForm({ onModeChange }: { onModeChange: () => void }) {
-    const { setAuthenticated } = useUserStore();
+    const { setAuthenticated, setEmail } = useUserStore();
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
 
@@ -80,6 +80,7 @@ export function SignUpForm({ onModeChange }: { onModeChange: () => void }) {
 
                 if (insertError) throw insertError;
                 setAuthenticated(true);
+                setEmail(values.email);
                 toast("Login Successful :/", {
                     style: {
                         color: "green"

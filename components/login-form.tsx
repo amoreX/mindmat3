@@ -29,7 +29,7 @@ const itemVariants = {
 
 export function LoginForm({ onModeChange }: { onModeChange: () => void }) {
     const router = useRouter()
-    const { setAuthenticated } = useUserStore()
+    const { setAuthenticated, setEmail } = useUserStore()
     const [isLoading, setIsLoading] = useState(false)
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -67,7 +67,8 @@ export function LoginForm({ onModeChange }: { onModeChange: () => void }) {
                     return
                 }
 
-                setAuthenticated(true)
+                setAuthenticated(true);
+                setEmail(values.email);
                 toast("Login successful", {
                     style: { color: "green" },
                 })

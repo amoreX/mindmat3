@@ -15,6 +15,7 @@ export const useUserStore = create<ExtendedUserStore>()(
         isAuthenticated: false,
         current_mental_state: "",
         name: "",
+        email: "",
         recommendations: [],
         mood_history: [],
 
@@ -28,6 +29,9 @@ export const useUserStore = create<ExtendedUserStore>()(
         },
         setName: (name: string) => {
           set(() => ({ name }));
+        },
+        setEmail: (email: string) => {
+          set(() => ({ email }));
         },
         setCurrent_mental_state: (mentalState: string) => {
           set(() => ({ current_mental_state: mentalState }));
@@ -46,6 +50,7 @@ export const useUserStore = create<ExtendedUserStore>()(
         name: "user-store",
         partialize: (state) => ({
           isAuthenticated: state.isAuthenticated,
+          email: state.email,
         }),
         onRehydrateStorage: () => (state) => {
           state?.setHydrated(true); // ✅ Use your own method to update `hydrated`
