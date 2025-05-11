@@ -2,17 +2,20 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useUserStore } from "@/store/userStore"
+import { supabase } from "@/lib/supabase-client"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import bcrypt from "bcryptjs";
+import { signUpFormSchema } from "@/schemas/auth-schemas";
+
 import { Loader2 } from "lucide-react"
 import { motion } from "framer-motion"
-
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-// import { toast } from "@/components/ui/use-toast"
-import { signUpFormSchema } from "@/schemas/auth-schemas";
+import { toast } from "sonner";
 
 const formSchema = signUpFormSchema;
 
@@ -25,7 +28,9 @@ const itemVariants = {
     },
 }
 
+
 export function SignUpForm({ onModeChange }: { onModeChange: () => void }) {
+    const { setAuthenticated } = useUserStore();
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
 
@@ -40,11 +45,60 @@ export function SignUpForm({ onModeChange }: { onModeChange: () => void }) {
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true)
-        setTimeout(() => {
-            console.log(values);
-            setIsLoading(false)
-            router.push("/dashboard")
-        }, 1500)
+        const handleSignin = async () => {
+            try {
+                const { data: existingUser, error: selectError } = await supabase
+                    .from("users")
+                    .select("*")
+                    .eq("email", values.email)
+                    .single();
+
+                if (existingUser) {
+                    toast("Email already registered :/", {
+                        style: {
+                            color: "red"
+                        }
+                    })
+                    return;
+                }
+
+                if (selectError && selectError.code !== "PGRST116") {
+                    throw selectError;
+                }
+
+                const hashedPassword = await bcrypt.hash(values.password, 10);
+
+                const { error: insertError } = await supabase.from("users").insert([
+                    {
+                        email: values.email,
+                        name: values.name,
+                        password: hashedPassword,
+                        current_mental_state: "",
+                        recommendations: [],
+                    },
+                ]);
+
+                if (insertError) throw insertError;
+                setAuthenticated(true);
+                toast("Login Successful :/", {
+                    style: {
+                        color: "green"
+                    }
+                })
+
+                router.push("/dashboard");
+            } catch (err) {
+                console.error("Signup error:", err);
+                toast("Sign up error :/", {
+                    style: {
+                        color: "red"
+                    }
+                })
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        handleSignin();
     }
 
     return (
@@ -121,3 +175,4 @@ export function SignUpForm({ onModeChange }: { onModeChange: () => void }) {
         </Form>
     )
 }
+
