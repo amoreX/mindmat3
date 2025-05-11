@@ -7,16 +7,16 @@ export default function Dashboard() {
     const router = useRouter();
     const { isAuthenticated, hydrated, email, setAuthenticated } = useUserStore();
     const [name, setName] = useState();
-    useEffect(() => {
-        if (!hydrated) return;
-        if (email == "") return;
-        const testingSupa = async () => {
-            const { data: userData, error: fuckingerror } = await supabase.from("users").select("*").eq("email", email).single();
-            console.log(userData);
-            setName(userData.name);
-        };
-        testingSupa();
-    })
+    // useEffect(() => {
+    //     if (!hydrated) return;
+    //     if (email == "") return;
+    //     const testingSupa = async () => {
+    //         const { data: userData, error: fuckingerror } = await supabase.from("users").select("*").eq("email", email).single();
+    //         console.log(userData);
+    //         setName(userData.name);
+    //     };
+    //     testingSupa();
+    // })
     useEffect(() => {
         if (hydrated && !isAuthenticated) {
             router.push("/signin");
@@ -25,5 +25,5 @@ export default function Dashboard() {
 
     if (!hydrated) return null; // or loading UI
 
-    return <div className="absolute " onClick={() => { setAuthenticated(false) }}>{name}</div>;
+    return <div className="absolute " onClick={() => { setAuthenticated(false) }}>{name} also click me to logout</div>;
 }
