@@ -1,13 +1,25 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { motion } from "framer-motion"
 
 export function AnimatedBackground() {
+    const [isMobile, setIsMobile] = useState(false)
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 768) // Adjust threshold as needed
+        }
+
+        handleResize()
+        window.addEventListener("resize", handleResize)
+        return () => window.removeEventListener("resize", handleResize)
+    }, [])
+
     return (
         <div className="fixed inset-0 z-0 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 opacity-80" />
-            {Array.from({ length: 15 }).map((_, i) => (
+            {Array.from({ length: isMobile ? 5 : 15 }).map((_, i) => (
                 <motion.div
                     key={i}
                     className="absolute rounded-full bg-gradient-to-br from-purple-300/20 to-indigo-300/20 backdrop-blur-3xl"
@@ -32,12 +44,12 @@ export function AnimatedBackground() {
                 />
             ))}
 
-            <ParticleCanvas />
+            <ParticleCanvas isMobile={isMobile} />
         </div>
     )
 }
 
-function ParticleCanvas() {
+function ParticleCanvas({ isMobile }: { isMobile: boolean }) {
     const canvasRef = useRef<HTMLCanvasElement>(null)
 
     useEffect(() => {
@@ -101,7 +113,10 @@ function ParticleCanvas() {
 
         const initParticles = () => {
             particles = []
-            const particleCount = Math.min(Math.floor((canvas.width * canvas.height) / 10000), 100)
+            const particleCount = Math.min(
+                Math.floor((canvas.width * canvas.height) / (isMobile ? 20000 : 10000)),
+                isMobile ? 50 : 100
+            )
 
             for (let i = 0; i < particleCount; i++) {
                 particles.push(new Particle(canvas, ctx))
@@ -125,7 +140,7 @@ function ParticleCanvas() {
             window.removeEventListener("resize", resizeCanvas)
             cancelAnimationFrame(animationFrameId)
         }
-    }, [])
+    }, [isMobile])
 
     return <canvas ref={canvasRef} className="absolute inset-0 z-0" style={{ pointerEvents: "none" }} />
 }
