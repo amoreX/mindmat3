@@ -10,7 +10,6 @@ export default function Dashboard() {
     useEffect(() => {
         if (!hydrated) return;
         if (email == "") return;
-        //code to fetch all data to hydrate components with
     })
     useEffect(() => {
         if (hydrated && !isAuthenticated) {

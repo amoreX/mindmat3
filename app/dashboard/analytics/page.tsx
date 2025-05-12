@@ -1,3 +1,4 @@
+"use client"
 import { JournalEntry } from "@/components/journal-entry"
 import { TodaysInsights } from "@/components/todays-insights"
 import { Recommendations } from "@/components/recommendations"

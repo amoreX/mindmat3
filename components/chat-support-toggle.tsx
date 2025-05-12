@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button"
 import { Brain, Sparkles } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-
+import { toast } from "sonner"
 export function ChatSupport() {
     const router = useRouter()
 
     const handleStartChat = () => {
-        router.push("/dashboard/mindy")
+        // router.push("/dashboard/mindy")
+        toast("Operational Soon!");
     }
 
     return (
