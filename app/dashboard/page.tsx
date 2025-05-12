@@ -3,19 +3,14 @@ import { useEffect, useState } from "react";
 import { useUserStore } from "@/store/userStore";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase-client";
+import Analytics from "./analytics/page";
 export default function Dashboard() {
     const router = useRouter();
     const { isAuthenticated, hydrated, email, setAuthenticated } = useUserStore();
-    const [name, setName] = useState();
     useEffect(() => {
         if (!hydrated) return;
         if (email == "") return;
-        const testingSupa = async () => {
-            const { data: userData, error: fuckingerror } = await supabase.from("users").select("*").eq("email", email).single();
-            console.log(userData);
-            setName(userData.name);
-        };
-        testingSupa();
+        //code to fetch all data to hydrate components with
     })
     useEffect(() => {
         if (hydrated && !isAuthenticated) {
@@ -23,7 +18,9 @@ export default function Dashboard() {
         }
     }, [hydrated, isAuthenticated]);
 
-    if (!hydrated) return null; // or loading UI
+    if (!hydrated) return null;
 
-    return <div className="absolute " onClick={() => { setAuthenticated(false) }}>{name} also click me to logout</div>;
+    return <div >
+        <Analytics />
+    </div>;
 }
