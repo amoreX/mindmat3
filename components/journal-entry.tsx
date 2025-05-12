@@ -40,7 +40,7 @@ export function JournalEntry() {
             <CardHeader className=" pb-4 backdrop-blur-xl">
                 <CardTitle className="text-center text-2xl bg-transparent">Daily Journal</CardTitle>
                 <CardDescription className="text-center">
-                    Write about your day, thoughts, or feelings. Our AI will provide personalized insights.
+                    Write about your day, thoughts, or feelings and MindMate will provide personalized insights.
                 </CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
