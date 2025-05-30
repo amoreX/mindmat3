@@ -11,7 +11,7 @@ export interface userStoreState {
   email: string;
   recommendations: string[];
   mood_history: mood[];
-  addMood: (mood: mood) => void;
+  addMood: (mood: mood) => Promise<void>; // Made this async
   setMood: (moods: mood[]) => void;
   setName: (name: string) => void;
   setEmail: (email: string) => void;

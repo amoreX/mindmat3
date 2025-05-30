@@ -1,16 +1,60 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { mood, userStoreState } from "@/utils/types";
+import { supabase } from "@/lib/supabase-client";
 
 type ExtendedUserStore = userStoreState & {
   hydrated: boolean;
   setHydrated: (value: boolean) => void;
 };
 
+// Helper function to add mood to Supabase
+const addMoodToSupabase = async (mood: mood, email: string) => {
+  try {
+    // First, get the user ID from the email
+    const { data: userData, error: userError } = await supabase
+      .from("users")
+      .select("id")
+      .eq("email", email)
+      .single();
+
+    if (userError) {
+      console.error("Error fetching user:", userError);
+      throw userError;
+    }
+
+    if (!userData) {
+      throw new Error("User not found");
+    }
+
+    // Now insert the mood data
+    const { data, error } = await supabase
+      .from("mood_history")
+      .insert({
+        user_id: userData.id,
+        mood_label: mood.label,
+        mood_description: mood.journal,
+        created_at: mood.date.toISOString(),
+      })
+      .select();
+
+    if (error) {
+      console.error("Error inserting mood:", error);
+      throw error;
+    }
+
+    console.log("Mood successfully added to Supabase:", data);
+    return data;
+  } catch (error) {
+    console.error("Failed to add mood to Supabase:", error);
+    throw error;
+  }
+};
+
 export const useUserStore = create<ExtendedUserStore>()(
   devtools(
     persist(
-      (set) => ({
+      (set, get) => ({
         hydrated: false,
         isAuthenticated: false,
         current_mental_state: "",
@@ -18,11 +62,25 @@ export const useUserStore = create<ExtendedUserStore>()(
         email: "",
         recommendations: [],
         mood_history: [],
-
-        addMood: (mood: mood) => {
+        addMood: async (mood: mood) => {
+          // Add to local state first
           set((state) => ({
             mood_history: [mood, ...state.mood_history],
           }));
+
+          // Then try to add to Supabase
+          const currentState = get();
+          if (currentState.email) {
+            try {
+              await addMoodToSupabase(mood, currentState.email);
+            } catch (error) {
+              console.error("Failed to sync mood to database:", error);
+              // Optionally, you could remove from local state if database sync fails
+              // or show a toast notification to the user
+            }
+          } else {
+            console.warn("No email found, mood not synced to database");
+          }
         },
         setMood: (moods: mood[]) => {
           set(() => ({ mood_history: moods }));
@@ -53,9 +111,9 @@ export const useUserStore = create<ExtendedUserStore>()(
           email: state.email,
         }),
         onRehydrateStorage: () => (state) => {
-          state?.setHydrated(true); // ✅ Use your own method to update `hydrated`
+          state?.setHydrated(true);
         },
-      }
-    )
-  )
+      },
+    ),
+  ),
 );
