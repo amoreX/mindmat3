@@ -1,7 +1,7 @@
 export type mood = {
   journal: string;
   label: string;
-  date: Date;
+  created_at: Date;
   user_id?: number | null;
 };
 
@@ -12,9 +12,8 @@ export interface userStoreState {
   email: string;
   recommendations: string[];
   mood_history: mood[];
-  // Add the missing properties that the error mentions
-  insights: string[]; // Add this
-  setInsights: (insights: string[]) => void; // Add this
+  insights: string[];
+  setInsights: (insights: string[]) => void;
   addMood: (mood: mood) => Promise<void>;
   setMood: (moods: mood[]) => void;
   setName: (name: string) => void;

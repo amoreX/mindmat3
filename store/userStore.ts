@@ -34,7 +34,7 @@ const addMoodToSupabase = async (mood: mood, email: string) => {
         user_id: userData.id,
         mood_label: mood.label,
         mood_description: mood.journal,
-        created_at: mood.date.toISOString(),
+        created_at: mood.created_at.toISOString(),
       })
       .select();
 

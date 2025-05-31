@@ -68,7 +68,7 @@ export function JournalEntry() {
         const newMood = {
           journal: curr.journal,
           label: curr.label,
-          date: new Date(),
+          created_at: new Date(),
         };
 
         try {
