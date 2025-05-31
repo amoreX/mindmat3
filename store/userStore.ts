@@ -62,21 +62,18 @@ export const useUserStore = create<ExtendedUserStore>()(
         email: "",
         recommendations: [],
         mood_history: [],
+        insights: [], // Add this missing property
         addMood: async (mood: mood) => {
-          // Add to local state first
           set((state) => ({
             mood_history: [mood, ...state.mood_history],
           }));
 
-          // Then try to add to Supabase
           const currentState = get();
           if (currentState.email) {
             try {
               await addMoodToSupabase(mood, currentState.email);
             } catch (error) {
               console.error("Failed to sync mood to database:", error);
-              // Optionally, you could remove from local state if database sync fails
-              // or show a toast notification to the user
             }
           } else {
             console.warn("No email found, mood not synced to database");
@@ -99,6 +96,10 @@ export const useUserStore = create<ExtendedUserStore>()(
         },
         setRecommendation: (recs: string[]) => {
           set(() => ({ recommendations: recs }));
+        },
+        setInsights: (insights: string[]) => {
+          // Add this missing method
+          set(() => ({ insights }));
         },
         setHydrated: (value: boolean) => {
           set(() => ({ hydrated: value }));
